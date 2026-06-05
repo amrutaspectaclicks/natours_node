@@ -5,7 +5,7 @@ const Tour = require('./../../modules/tourModules');
 const User = require('./../../modules/userModules');
 const Review = require('./../../modules/reviewModules');
 dotenv.config({ path: './config.env' });
-//console.log(process.env)
+
 
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
@@ -40,7 +40,6 @@ const importData = async () => {
     await Tour.create(tours);
     await User.create(users, { validateBeforeSave: false });
     await Review.create(reviews);
-    console.log('data successfully loaded');
     process.exit();
   } catch (err) {
     console.log(err);
@@ -53,8 +52,6 @@ const deleteData = async () => {
     await Tour.deleteMany();
     await User.deleteMany();
     await Review.deleteMany();
-    console.log('data deleted');
-    process.exit();
   } catch (err) {
     console.log(err);
   }

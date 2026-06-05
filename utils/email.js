@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const pug = require('pug');
-const {convert} = require('html-to-text');
+const { convert } = require('html-to-text');
 
 module.exports = class Email {
   constructor(user, url) {
@@ -11,47 +11,43 @@ module.exports = class Email {
   }
 
   newTransport() {
-     console.log('NODE_ENV =', process.env.NODE_ENV);
     if (process.env.NODE_ENV === 'production') {
       return nodemailer.createTransport({
-      service:"sendGrid",
-        auth:{
-        user:process.env.SENDGRID_USER_NAME,
-        pass:process.env.SENDGRID_PASSWORD
+        service: 'sendGrid',
+        auth: {
+          user: process.env.SENDGRID_USER_NAME,
+          pass: process.env.SENDGRID_PASSWORD,
+        },
+      });
     }
-     
-    });
-    }
-    
   }
   async send(template, subject) {
     // 1] render the HTML based on pug
-    const html =pug.renderFile(
-      `${__dirname}/../views/email/${template}.pug`,
-      {
-        firstName: this.firstName,
-        url: this.url,
-        subject,
-      },
-    );
+    const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
+      firstName: this.firstName,
+      url: this.url,
+      subject,
+    });
     // 2] Define email options
     const mailOption = {
       from: this.from,
       to: this.to,
       subject,
       html,
-      text: convert(html)
+      text: convert(html),
     };
     //3 create a transport send mail
-    console.log(mailOption);
-  console.log('EMAIL_FROM:', process.env.EMAIL_FROM);
+
     await this.newTransport().sendMail(mailOption);
   }
   async sendWelcome() {
     await this.send('welcome', 'welcome to natours family');
   }
-    async  sendPasswordReset() {
-    await this.send('passwordReset', 'your password resettoken valid for only 10 minutes');
+  async sendPasswordReset() {
+    await this.send(
+      'passwordReset',
+      'your password resettoken valid for only 10 minutes',
+    );
   }
 };
 

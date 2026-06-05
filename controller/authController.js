@@ -80,8 +80,7 @@ exports.logout = (req, res) => {
 exports.protect = catchAsync(async (req, res, next) => {
   //get token and check of its there
   let token;
-  console.log('authorization:', req.headers.authorization);
-console.log('cookies:', req.cookies);
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
@@ -90,7 +89,7 @@ console.log('cookies:', req.cookies);
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
-  console.log('token step 1', token);
+  // console.log('token step 1', token);
 
   if (!token) {
     return next(
@@ -101,11 +100,11 @@ console.log('cookies:', req.cookies);
   //2)varification token
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log('STEP 2 decoded:', decoded);
+  // console.log('STEP 2 decoded:', decoded);
   //3) Check if user still exists
 
   const currentUser = await User.findById(decoded.id);
-    console.log('STEP 3 currentUser:', currentUser);
+    // console.log('STEP 3 currentUser:', currentUser);
   if (!currentUser) {
     return next(
       new AppError(
@@ -114,7 +113,7 @@ console.log('cookies:', req.cookies);
       ),
     );
   }
-   console.log('STEP 4 passwordChangedAt:', currentUser.passwordChangedAt);
+  //  console.log('STEP 4 passwordChangedAt:', currentUser.passwordChangedAt);
 
   //4 check if user changed after the token was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
@@ -122,7 +121,7 @@ console.log('cookies:', req.cookies);
       new AppError('User Recentaly changed password! Please log in again', 401),
     );
   }
-  console.log('STEP 5 access granted');
+  // console.log('STEP 5 access granted');
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
   res.locals.user = currentUser;
@@ -197,7 +196,6 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
       message: 'token sent to email',
     });
   } catch (err) {
-    console.log('ERROR', err);
     ((user.passwordResetToken = undefined),
       (user.passwordResetExpires = undefined));
     await user.save({ validateBeforeSave: false });

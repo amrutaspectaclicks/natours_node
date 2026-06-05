@@ -35,7 +35,6 @@ exports.uploadTourImages = (req, res, next) => {
     { name:'images', maxCount: 3 }
   ])(req, res, err => {
     if (err) {
-      console.log('FIELD:', err.field);
       console.log(err);
     }
     next(err);
@@ -47,7 +46,6 @@ exports.uploadTourImages = (req, res, next) => {
 
 exports.resizeTourImages = catchAsync (async (req,res,next) => {
 
-console.log(req.files);
   if(!req.files.imageCover || !req.files.images) return next();
   // [1] IMAGE COVER
   req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`

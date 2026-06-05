@@ -8,6 +8,7 @@ const hpp = require('hpp');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const cookieParser = require('cookie-parser')
+const compression = require('compression')
 
 const AppError = require('./utils/appError');
 const errController = require('./controller/errorController');
@@ -73,11 +74,12 @@ app.use(
 );
 
 app.use(express.json());
+app.use(compression())
 
 //Test Middleware
 app.use((req, res, next) => {
   req.reqestTime = new Date().toISOString();
-    console.log(req.method, req.originalUrl);
+   // console.log(req.method, req.originalUrl);
   // console.log(req.cookies)
   next();
 });
